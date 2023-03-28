@@ -1,11 +1,13 @@
 import os
 import requests
+import sys
 
 from requests.exceptions import RequestException
 import time
 
 METADATA_BASE_URL = "http://169.254.169.254/latest/"
 METADATA_TIMEOUT = 1.0
+ZEUS_CONTROLLER = "http://zeus-controller/register-node"
 
 class MetadataError(Exception):
     pass
@@ -33,15 +35,18 @@ def register_node():
     if not token:
         raise MetadataError("Failed to fetch IMDSv2 token. Exiting.")
 
+    node_id = get_metadata("instance-id", token)
     node_name = get_metadata("hostname", token)
     node_ip = get_metadata("local-ipv4", token)
     availability_zone = get_metadata("placement/availability-zone", token)
     availability_zone_id = get_metadata("placement/availability-zone-id", token)
 
-    if not (node_name and node_ip and availability_zone):
+    if not (node_id and node_name and node_ip and availability_zone and availability_zone_id):
         raise MetadataError("Failed to fetch metadata. Exiting.")
+        sys.exit(1)
 
     return {
+        "node_id": node_id,
         "node_name": node_name,
         "node_ip": node_ip, 
         "availability_zone": availability_zone,
@@ -51,7 +56,9 @@ def register_node():
 try:
     node_metadata = register_node()
     print(node_metadata)
-except MetadataError as e:
+    response = requests.post(ZEUS_CONTROLLER, json=node_metadata)
+    response.raise_for_status()
+except (MetadataError, RequestException) as e:
     print(str(e))
     exit(1)
 
