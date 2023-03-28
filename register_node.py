@@ -49,8 +49,8 @@ def register_node():
         "node_id": node_id,
         "node_name": node_name,
         "node_ip": node_ip, 
-        "availability_zone": availability_zone,
-        "availability_zone_id": availability_zone_id
+        "node_az": availability_zone,
+        "node_az_id": availability_zone_id
     }
 
 try:
