@@ -1,5 +1,5 @@
 import os
-import requestsg
+import requests
 
 from requests.exceptions import RequestException
 import time

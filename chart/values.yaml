@@ -1,4 +1,4 @@
 name: zeus-node
 image:
-  repo: docker pull ghcr.io/picus92/zeus-node
+  repo: ghcr.io/picus92/zeus-node
   tag: latest
