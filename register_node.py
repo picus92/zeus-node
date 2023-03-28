@@ -50,6 +50,7 @@ def register_node():
 
 try:
     node_metadata = register_node()
+    print(node_metadata)
 except MetadataError as e:
     print(str(e))
     exit(1)
