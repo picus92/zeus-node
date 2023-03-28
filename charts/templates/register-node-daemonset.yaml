@@ -1,0 +1,26 @@
+{{-  $imageTag := printf "%s:%s" .Values.image.repo .Values.image.tag -}}
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Values.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      hostNetwork: true
+      containers:
+      - name: {{ .Values.name }}
+        image: {{ $imageTag }}
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+        command: ["python3", "-u", "/app/register_node.py"]
+        ports:
+          - name: "metrics"
+            containerPort: 8000
